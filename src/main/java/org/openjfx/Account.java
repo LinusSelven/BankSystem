@@ -3,10 +3,10 @@ package org.openjfx;
 public class Account {
     private int id;
     private Bank bank;
-    private Human person;
+    private Person person;
     private float balance;
 
-    public Account(int id, Bank bank, Human person, float balance) {
+    public Account(int id, Bank bank, Person person, float balance) {
         this.id = id;
         this.bank = bank;
         this.person = person;
@@ -21,7 +21,7 @@ public class Account {
         return bank;
     }
 
-    public Human getPerson() {
+    public Person getPerson() {
         return person;
     }
 
