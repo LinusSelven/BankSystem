@@ -4,10 +4,10 @@ import java.util.ArrayList;
 
 public class Model {
 
-    ArrayList<Account> accounts;
+    private ArrayList<Account> accounts;
 
-    public Model(ArrayList<Account> accounts) {
-        this.accounts = accounts;
+    public Model() {
+
     }
 
     public ArrayList<Account> getAccounts() {
