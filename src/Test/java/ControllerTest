@@ -1,0 +1,65 @@
+package java;
+
+import org.openjfx.Controller;
+import org.junit.jupiter.api.*;
+
+import java.util.List;
+
+public class ControllerTest {
+
+    Model model = new Model();
+    Controller controller = new Controller(model);
+
+    @Test
+    public void constructorTest(model) {
+        Controller controller = new Controller(model);
+    }
+
+    @Test
+    public void getModelTest() {
+        Assertions.assertNotNull(Model m = controller.getModel());
+    }
+
+    @Test
+    public void getListTest() {
+        Assertions.assertNotNull(controller.getList("personList"));
+        Assertions.assertNotNull(controller.getList("bankList"));
+        Assertions.assertNotNull(controller.getList("accountList"));
+        Assertions.assertNotNull(controller.getList("nameList"));
+    }
+
+    @Test
+    public void createPersonTest() {
+        List list = controller.getList("personlist");
+        Assertions.assertNotNull(list.get(0));
+        Assertions.assertNotNull(list.get(1));
+        Assertions.assertNotNull(list.get(2));
+        Assertions.assertNotNull(list.get(3));
+        Assertions.assertNotNull(list.get(4));
+        Assertions.assertNotNull(list.get(5));
+        Assertions.assertNotNull(list.get(6));
+    }
+
+    @Test
+    public void createBankTest() {
+        List list = controller.getList("bankList");
+        Assertions.assertNotNull(list.get(0));
+        Assertions.assertNotNull(list.get(1));
+        Assertions.assertNotNull(list.get(2));
+        Assertions.assertNotNull(list.get(3));
+    }
+
+    @Test
+    public void crateAccountTest() {
+        List list = controller.getList("accountList");
+        Assertions.assertNotNull(list.get(0));
+        Assertions.assertNotNull(list.get(1));
+        Assertions.assertNotNull(list.get(2));
+        Assertions.assertNotNull(list.get(3));
+        Assertions.assertNotNull(list.get(4));
+        Assertions.assertNotNull(list.get(5));
+        Assertions.assertNotNull(list.get(6));
+        Assertions.assertNotNull(list.get(7));
+        Assertions.assertNotNull(list.get(8));
+    }
+}
