@@ -1,5 +1,8 @@
 package org.openjfx;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -127,12 +130,8 @@ public class PrimaryController implements Initializable {
                 operations.deposit(id, amount, accountList);
                 operationsList.add("[ Deposit ] - Amount :"+amount+"  "+"  Message :"+message);
                 listView.getItems().add("[ Deposit ] - Amount :"+amount+"  "+"  Message :"+message);
-
-                //empty TextField
                 textFieldAmountTransfer.setText("");
                 textAreaTransferMessage.setText("Your message here ...");
-
-                //------ToShow
                 List<Account> filterList = accountList.stream()
                         .filter(e -> e.getId() == id)
                         .collect(Collectors.toList());
@@ -145,12 +144,8 @@ public class PrimaryController implements Initializable {
                 operations.withdraw(id, amount, accountList);
                 operationsList.add("[ Withdraw ] - Amount :"+amount+"  "+"  Message :"+message);
                 listView.getItems().add("[ Withdraw ] - Amount :"+amount+"  "+"  Message :"+message);
-
-                //empty TextField
                 textFieldAmountTransfer.setText("");
                 textAreaTransferMessage.setText("Your message here ...");
-
-                //------ToShow
                 List<Account> filterList = accountList.stream()
                         .filter(e -> e.getId() == id)
                         .collect(Collectors.toList());
@@ -164,13 +159,9 @@ public class PrimaryController implements Initializable {
                 operations.transfer(idFrom, idTo, amount, accountList);
                 operationsList.add("[ Transfer ] - Amount :"+amount+"  "+"To AccountID :"+idTo+"  "+" Message :"+ message);
                 listView.getItems().add("[ Transfer ] - Amount :"+amount+"  "+"To AccountID :"+idTo+"  "+" Message :"+ message);
-
-                //empty TextField
                 textFieldAmountTransfer.setText("");
                 textFieldAccountIdTransfer.setText("");
                 textAreaTransferMessage.setText("Your message here ...");
-
-                //------ToShow
                 List<Account> filterList = accountList.stream()
                         .filter(e -> e.getId() == idFrom)
                         .collect(Collectors.toList());
@@ -251,6 +242,46 @@ public class PrimaryController implements Initializable {
         alert.setContentText("The ID contains digits!");
         alert.setHeaderText(null);
         alert.showAndWait();
+    }
+
+    @FXML
+    public void saveTextFile(ActionEvent actionEvent) {
+        int counter = 0;
+        int id = Integer.parseInt(textFieldLogIn.getText());
+        List<Account> filterList = accountList.stream()
+                .filter(e -> e.getId() == id)
+                .collect(Collectors.toList());
+        int index = accountList.indexOf(filterList.get(0));
+        String path = System.getProperty("user.home") +
+                File.separator + "Documents" +
+                File.separator + "CustomFolder";
+
+        File dir = new File(path);
+
+        if (dir.exists())
+            System.out.println("Folder exist");
+        else if (dir.mkdir())
+            System.out.println("Folder created");
+        else
+            System.out.println("Folder not created");
+
+        File filePath = new File(path + File.separator + "Kvittot.txt");
+
+        try (FileWriter out = new FileWriter(filePath + ".txt")) {
+            out.write("------------------------------------------------------------------" + "\n");
+            out.write("AccountID :" + id + "  " + "|" + " " + "Firstname :" + accountList.get(index).getPerson().getFirstName() + "  " + "|" + " " + "Lastname :" + accountList.get(index).getPerson().getLastName() + "\n");
+
+            out.write("------------------------------------------------------------------" + "\n");
+            for (String str : operationsList) {
+                counter++;
+                out.write("Operation number : "+counter + " | " + str + "\n");
+            }
+            out.write("------------------------------------------------------------------" + "\n");
+            out.write("Amount available :" + accountList.get(index).getBalance() + "kr" + "\n");
+            out.write("------------------------------------------------------------------" + "\n");
+        } catch (IOException ex) {
+            System.out.println("Error!");
+        }
     }
 
     private void createAccount() {
