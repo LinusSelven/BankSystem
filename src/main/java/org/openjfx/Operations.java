@@ -4,21 +4,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Operations {
-    private List<Account> accountList;
 
-    public Operations(List<Account> accountList) {
-        this.accountList = accountList;
+    public Operations() {
     }
 
-    public void deposit(int id,  float amount)    {
-        float balance=0.0f;
+    public void deposit(int id,  float amount, List<Account> accountList){
+        float balance;
         List<Account> filteredList = accountList.stream()
                 .filter(e -> e.getId() == id)
                 .collect(Collectors.toList());
-        if (filteredList.size() == 1)
-        {
-            if (amount > 0)
-            {
+        if (filteredList.size() == 1){
+            if (amount > 0) {
                 int index = accountList.indexOf(filteredList.get(0));
                 balance = accountList.get(index).getBalance();
                 balance= balance + amount;
@@ -27,8 +23,7 @@ public class Operations {
         }
     }
 
-    public void withdraw(int id, float amount)
-    {
+    public void withdraw(int id, float amount, List<Account> accountList){
         List<Account> filteredList = accountList.stream()
                 .filter(e -> e.getId() == id)
                 .collect(Collectors.toList());
@@ -44,8 +39,7 @@ public class Operations {
         }
     }
 
-    public void transfer(int idFrom , int idTo, float amount)
-    {
+    public void transfer(int idFrom , int idTo, float amount, List<Account> accountList){
         int indexIdFrom= accountList.indexOf(accountList.stream()
                 .filter(e -> e.getId() == idFrom)
                 .collect(Collectors.toList()).get(0));
@@ -54,15 +48,12 @@ public class Operations {
                 .filter(e -> e.getId() == idTo)
                 .collect(Collectors.toList()).get(0));
 
-        float balance1=0.0f;
-        float balance2=0.0f;
-        if (accountList.get(indexIdFrom)!= null && accountList.get(indexIdTo)!=null)
-        {
-            if (accountList.get(indexIdFrom).getBalance() >= amount)
-            {
+        float balance1;
+        float balance2;
+        if (accountList.get(indexIdFrom)!= null && accountList.get(indexIdTo)!=null){
+            if (accountList.get(indexIdFrom).getBalance() >= amount){
                 balance1 = accountList.get(indexIdFrom).getBalance();
                 accountList.get(indexIdFrom).setBalance(balance1- amount);
-
                 balance2 = accountList.get(indexIdTo).getBalance();
                 accountList.get(indexIdTo).setBalance(balance2 + amount);
             }

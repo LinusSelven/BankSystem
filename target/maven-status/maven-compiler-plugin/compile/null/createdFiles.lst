@@ -1,0 +1,9 @@
+org\openjfx\Account.class
+org\openjfx\PrimaryController.class
+org\openjfx\Model.class
+org\openjfx\Person.class
+module-info.class
+org\openjfx\Human.class
+org\openjfx\Operations.class
+org\openjfx\Bank.class
+org\openjfx\App.class

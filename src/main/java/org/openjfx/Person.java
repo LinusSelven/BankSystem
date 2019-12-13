@@ -1,10 +1,12 @@
 package org.openjfx;
 
+import java.util.Objects;
+
 public class Person implements Human {
 
-    String firstName;
-    String lastName;
-    int age;
+    private String firstName;
+    private String lastName;
+    private int age;
 
     public Person(String firstName, String lastName, int age) {
         this.firstName = firstName;
@@ -27,6 +29,27 @@ public class Person implements Human {
         return age;
     }
 
+    @Override
+    public String toString() {
+        return "Person{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", age=" + age +
+                '}';
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return age == person.age &&
+                Objects.equals(firstName, person.firstName) &&
+                Objects.equals(lastName, person.lastName);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, age);
+    }
 }
