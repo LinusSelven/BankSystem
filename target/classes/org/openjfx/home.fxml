@@ -114,7 +114,7 @@
 
     <Label alignment="CENTER" contentDisplay="CENTER" layoutX="593.0" layoutY="288.0" prefHeight="39.0" prefWidth="242.0" style="-fx-border-color: #ffffff; -fx-background-color: #010e1a;" text="BANK STATEMENTS" textFill="WHITE" />
     <ListView fx:id="listView" layoutX="355.0" layoutY="339.0" prefHeight="345.0" prefWidth="706.0" />
-    <Button fx:id="buttonPrintOut" layoutX="988.0" layoutY="689.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="74.0" style="-fx-background-color: #0f9031;" textFill="WHITE" />
+    <Button fx:id="buttonPrintOut" onAction="#saveTextFile" layoutX="988.0" layoutY="689.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="74.0" style="-fx-background-color: #0f9031;" textFill="WHITE" />
 
     <ImageView fitHeight="23.0" fitWidth="23.0" layoutX="703.0" layoutY="248.0">
         <Image url="@icons8-verified-account-48.png" />

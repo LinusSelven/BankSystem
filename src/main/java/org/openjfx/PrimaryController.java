@@ -247,7 +247,7 @@ public class PrimaryController implements Initializable {
     @FXML
     public void saveTextFile(ActionEvent actionEvent) {
         int counter = 0;
-        int id = Integer.parseInt(textFieldLogIn.getText());
+        int id = Integer.parseInt(textFieldIdSHow.getText());
         List<Account> filterList = accountList.stream()
                 .filter(e -> e.getId() == id)
                 .collect(Collectors.toList());
