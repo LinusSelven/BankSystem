@@ -30,6 +30,9 @@ public class PrimaryController implements Initializable {
     private List<Account> accountList = new ArrayList<>();
     private List<String> operationsList = new ArrayList<>();
 
+    private int receiptCounter = 1;
+    private int currentAccount;
+
 
 
 
@@ -128,7 +131,7 @@ public class PrimaryController implements Initializable {
                 float amount = Float.parseFloat(textFieldAmountTransfer.getText());
                 String message = textAreaTransferMessage.getText();
                 operations.deposit(id, amount, accountList);
-                operationsList.add("[ Deposit ] - Amount :"+amount+"  "+"  Message :"+message);
+                operationsList.add("[ Deposit ]" + "\t" + " - Amount :"+amount+"  "+ "\t" + "  Message :"+message);
                 listView.getItems().add("[ Deposit ] - Amount :"+amount+"  "+"  Message :"+message);
                 textFieldAmountTransfer.setText("");
                 textAreaTransferMessage.setText("Your message here ...");
@@ -141,9 +144,13 @@ public class PrimaryController implements Initializable {
                 int id = Integer.parseInt(textFieldIdSHow.getText());
                 float amount = Float.parseFloat(textFieldAmountTransfer.getText());
                 String message = textAreaTransferMessage.getText();
+                float beforeWithdraw = accountList.get(id - 1).getBalance();
                 operations.withdraw(id, amount, accountList);
-                operationsList.add("[ Withdraw ] - Amount :"+amount+"  "+"  Message :"+message);
-                listView.getItems().add("[ Withdraw ] - Amount :"+amount+"  "+"  Message :"+message);
+                float afterWithdraw = accountList.get(id -1).getBalance();
+                if (beforeWithdraw != afterWithdraw) {
+                    operationsList.add("[ Withdraw ]" + "\t" + " - Amount :" + amount + "  " + "\t" + "  Message :" + message);
+                    listView.getItems().add("[ Withdraw ] - Amount :" + amount + "  " + "  Message :" + message);
+                }
                 textFieldAmountTransfer.setText("");
                 textAreaTransferMessage.setText("Your message here ...");
                 List<Account> filterList = accountList.stream()
@@ -157,8 +164,8 @@ public class PrimaryController implements Initializable {
                 int idTo = Integer.parseInt(textFieldAccountIdTransfer.getText());
                 String message = textAreaTransferMessage.getText();
                 operations.transfer(idFrom, idTo, amount, accountList);
-                operationsList.add("[ Transfer ] - Amount :"+amount+"  "+"To AccountID :"+idTo+"  "+" Message :"+ message);
-                listView.getItems().add("[ Transfer ] - Amount :"+amount+"  "+"To AccountID :"+idTo+"  "+" Message :"+ message);
+                operationsList.add("[ Transfer ]" + "\t" + " - Amount :"+amount+"  "+ "\t" + "  To AccountID :"+idTo+"  "+ "\t" + " Message :"+ message);
+                listView.getItems().add("[ Transfer ] - Amount :"+amount+"  "+ "\t" + "To AccountID :"+idTo+"  "+ "\t" + " Message :"+ message);
                 textFieldAmountTransfer.setText("");
                 textFieldAccountIdTransfer.setText("");
                 textAreaTransferMessage.setText("Your message here ...");
@@ -190,6 +197,10 @@ public class PrimaryController implements Initializable {
                     logOutButton.setVisible(true);
                     logOutImageView.setVisible(true);
                     textFieldLogIn.setText("");
+                    if (currentAccount != filterList.get(0).getId())
+                        System.out.println("New account chosen");
+                        operationsList.clear();
+                        listView.getItems().clear();
                 }else {
                     wrongId(textFieldLogIn.getText());
                     textFieldLogIn.setText("");
@@ -209,19 +220,19 @@ public class PrimaryController implements Initializable {
     }
     private void idShouldBeInt() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("The ID should be digits!");
+        alert.setContentText("The ID should be in digits!");
         alert.setHeaderText(null);
         alert.showAndWait();
     }
     private void ageShouldBeInt() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("The age should be digits!");
+        alert.setContentText("The age should be in digits!");
         alert.setHeaderText(null);
         alert.showAndWait();
     }
     private void balanceShouldBeFloat() {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("The Balance should be digits!");
+        alert.setContentText("The Balance should be in digits!");
         alert.setHeaderText(null);
         alert.showAndWait();
     }
@@ -233,7 +244,7 @@ public class PrimaryController implements Initializable {
     }
     private void wrongId(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("There is no account has this ID :["+message+"]");
+        alert.setContentText("There is no account with this ID :["+message+"]");
         alert.setHeaderText(null);
         alert.showAndWait();
     }
@@ -257,28 +268,30 @@ public class PrimaryController implements Initializable {
                 File.separator + "CustomFolder";
 
         File dir = new File(path);
+        File filePath = new File(path + File.separator + "Receipt.txt");
 
-        if (dir.exists())
+        if (dir.exists()) {
             System.out.println("Folder exist");
-        else if (dir.mkdir())
+            filePath = new File(path + File.separator + "Receipt" + receiptCounter++ + ".txt");
+        } else if (dir.mkdir())
             System.out.println("Folder created");
         else
             System.out.println("Folder not created");
 
-        File filePath = new File(path + File.separator + "Kvittot.txt");
+        //File filePath = new File(path + File.separator + "Receipt.txt");
 
         try (FileWriter out = new FileWriter(filePath + ".txt")) {
-            out.write("------------------------------------------------------------------" + "\n");
+            out.write("--------------------------------------------------------------------------------------------------------------------------" + "\n");
             out.write("AccountID :" + id + "  " + "|" + " " + "Firstname :" + accountList.get(index).getPerson().getFirstName() + "  " + "|" + " " + "Lastname :" + accountList.get(index).getPerson().getLastName() + "\n");
 
-            out.write("------------------------------------------------------------------" + "\n");
+            out.write("--------------------------------------------------------------------------------------------------------------------------" + "\n");
             for (String str : operationsList) {
                 counter++;
                 out.write("Operation number : "+counter + " | " + str + "\n");
             }
-            out.write("------------------------------------------------------------------" + "\n");
+            out.write("--------------------------------------------------------------------------------------------------------------------------" + "\n");
             out.write("Amount available :" + accountList.get(index).getBalance() + "kr" + "\n");
-            out.write("------------------------------------------------------------------" + "\n");
+            out.write("--------------------------------------------------------------------------------------------------------------------------" + "\n");
         } catch (IOException ex) {
             System.out.println("Error!");
         }
