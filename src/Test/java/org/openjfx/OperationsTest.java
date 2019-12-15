@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+/*
 class OperationsTest {
     //private  Account account = new Account(1, 100, new Person("Java", "Java", 35), new Bank("Swedbank"));
     //private  Account account2 = new Account(2, 200, new Person("Python", "Python", 25), new Bank("HSBC"));
@@ -77,3 +77,5 @@ class OperationsTest {
     }
 
 }
+
+*/
