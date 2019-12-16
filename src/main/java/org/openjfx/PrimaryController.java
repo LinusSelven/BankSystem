@@ -1,5 +1,17 @@
 package org.openjfx;
 
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,24 +21,25 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Cursor;
-import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-
 public class PrimaryController implements Initializable {
 
     @FXML private Label label;
+    @FXML private Label labelLoginName = new Label();
     @FXML private TextField textFieldLogIn, textFieldIdSHow, textFieldBalanceSHow,  textFieldBankSHow, textFieldFirstSHow, textFieldLastSHow,
             textFieldAgeSHow, textFieldIdAdd, textFieldBalanceAdd,  textFieldBankAdd, textFieldFirstAdd, textFieldLastAdd,
-            textFieldAgeAdd, textFieldAmountTransfer, textFieldAccountIdTransfer;
+            textFieldAgeAdd, textFieldAmountTransfer, textFieldAccountIdTransfer, textFieldFilter;
     @FXML private TextArea textAreaTransferMessage;
-    @FXML private RadioButton radioButtonDeposit,radioButtonWithDraw,radioButtonTransfer;
-    @FXML private Button buttonShow, logOutButton, buttonAdd, buttonOperations, buttonPrintOut;
-    @FXML private ImageView logOutImageView;
+    @FXML private RadioButton radioButtonDeposit,radioButtonWithDraw,radioButtonTransfer, radioButtonAgeFilter, radioButtonBankFilter, radioButtonNameFilter, radioButtonIdFilter;
+    @FXML private Button buttonShow, logOutButton, buttonAdd, buttonOperations, buttonPrintOut, filterButton;
     @FXML private ListView<String> listView = new ListView<>();
+    @FXML private TableView<Account> tableView = new TableView<>();
+    @FXML private TableColumn<Account, Integer> idCol = new TableColumn<>();
+    @FXML private TableColumn<Account, Float> balanceCol = new TableColumn<>();
+    @FXML private TableColumn<Account, String> bankCol = new TableColumn<>();
+    @FXML private TableColumn<Account, String> firstNameCol = new TableColumn<>();
+    @FXML private TableColumn<Account, String> lastNameCol = new TableColumn<>();
+    @FXML private TableColumn<Account, Integer> ageCol = new TableColumn<>();
+    @FXML private ImageView searchImage, logInImage, logOutImageView, operationDoneId ,printImageId, saveImageId;
     private List<Account> accountList = new ArrayList<>();
     private List<String> operationsList = new ArrayList<>();
 
@@ -37,9 +50,21 @@ public class PrimaryController implements Initializable {
     }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        labelLoginName.setText("");
         textFieldAccountIdTransfer.setVisible(false);
         logOutButton.setVisible(false);
         logOutImageView.setVisible(false);
+        labelLoginName.setVisible(false);
+
+        Button [] buttons = {buttonShow, logOutButton, buttonAdd, buttonOperations, buttonPrintOut, filterButton};
+        for (Button button : buttons){
+            button.setCursor(Cursor.HAND);
+        }
+        ImageView [] imageViews = {searchImage, logInImage, logOutImageView, operationDoneId ,printImageId, saveImageId};
+        for (ImageView imageView : imageViews){
+            imageView.setCursor(Cursor.HAND);
+        }
+
 
         RadioButton[] radioButtons = {radioButtonDeposit, radioButtonWithDraw, radioButtonTransfer };
         ToggleGroup tools= new ToggleGroup();
@@ -47,8 +72,14 @@ public class PrimaryController implements Initializable {
             tool.setToggleGroup(tools);
             tool.setCursor(Cursor.HAND);
         }
+        RadioButton[] radioButtonsFilter = {radioButtonAgeFilter, radioButtonBankFilter, radioButtonNameFilter, radioButtonIdFilter};
+        ToggleGroup group= new ToggleGroup();
+        for (ToggleButton tool : radioButtonsFilter){
+            tool.setToggleGroup(group);
+            tool.setCursor(Cursor.HAND);
+        }
 
-        TextField [] textFieldAdd = {textFieldIdAdd, textFieldBalanceAdd,  textFieldBankAdd, textFieldFirstAdd, textFieldLastAdd, textFieldAgeAdd, textFieldAmountTransfer, textFieldAccountIdTransfer};
+        TextField [] textFieldAdd = {textFieldIdAdd, textFieldBalanceAdd,  textFieldBankAdd, textFieldFirstAdd, textFieldLastAdd, textFieldAgeAdd, textFieldAmountTransfer, textFieldAccountIdTransfer, textFieldFilter};
         for (TextField textField : textFieldAdd) {
             textField.setText("");
             textField.setStyle("-fx-text-fill: DarkBlue; ");
@@ -59,6 +90,15 @@ public class PrimaryController implements Initializable {
             textField.setStyle("-fx-text-fill: blue;");
 
         }
+
+        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        balanceCol.setCellValueFactory(new PropertyValueFactory<>("balance"));
+        bankCol.setCellValueFactory(bankName -> new ReadOnlyObjectWrapper<>( bankName.getValue().getBank().getName()));
+        firstNameCol.setCellValueFactory(firstName -> new ReadOnlyObjectWrapper<>( firstName.getValue().getPerson().getFirstName()));
+        lastNameCol.setCellValueFactory(lastNameGet -> new ReadOnlyObjectWrapper<>(lastNameGet.getValue().getPerson().getLastName()));
+        ageCol.setCellValueFactory(ageGet ->  new ReadOnlyObjectWrapper<>(ageGet.getValue().getPerson().getAge()));
+        createAccount();
+
     }
     @FXML
     private void transferIsSelected(ActionEvent actionEvent) {
@@ -71,6 +111,13 @@ public class PrimaryController implements Initializable {
     @FXML
     private void withDrawIsSelected(ActionEvent actionEvent) {
         textFieldAccountIdTransfer.setVisible(false);
+    }
+    private void logIn(){
+        if (!textFieldIdSHow.getText().equals("")){
+            textFieldLogIn.setVisible(false);
+            buttonShow.setVisible(false);
+            logInImage.setVisible(false);
+        }
     }
     @FXML
     private void addNewAccount(){
@@ -119,7 +166,7 @@ public class PrimaryController implements Initializable {
         });
     }
     @FXML
-    private void opration() {
+    private void operation() {
         buttonOperations.setOnAction(actionEvent -> {
             Operations operations = new Operations();
 
@@ -127,11 +174,21 @@ public class PrimaryController implements Initializable {
                 int id = Integer.parseInt(textFieldIdSHow.getText());
                 float amount = Float.parseFloat(textFieldAmountTransfer.getText());
                 String message = textAreaTransferMessage.getText();
-                operations.deposit(id, amount, accountList);
-                operationsList.add("[ Deposit ] - Amount :"+amount+"  "+"  Message :"+message);
-                listView.getItems().add("[ Deposit ] - Amount :"+amount+"  "+"  Message :"+message);
+                operations.deposit(id, amount, accountList, message, operationsList);
+
+                if (listView.getItems().size()>= 1){
+                    listView.getItems().clear();
+                    for (String str : operationsList){
+                        listView.getItems().add(str);
+                    }
+                }else {
+                    for (String str : operationsList){
+                        listView.getItems().add(str);
+                    }
+                }
                 textFieldAmountTransfer.setText("");
-                textAreaTransferMessage.setText("Your message here ...");
+                textAreaTransferMessage.setText("");
+                textAreaTransferMessage.setPromptText("Your message here ...");
                 List<Account> filterList = accountList.stream()
                         .filter(e -> e.getId() == id)
                         .collect(Collectors.toList());
@@ -141,11 +198,20 @@ public class PrimaryController implements Initializable {
                 int id = Integer.parseInt(textFieldIdSHow.getText());
                 float amount = Float.parseFloat(textFieldAmountTransfer.getText());
                 String message = textAreaTransferMessage.getText();
-                operations.withdraw(id, amount, accountList);
-                operationsList.add("[ Withdraw ] - Amount :"+amount+"  "+"  Message :"+message);
-                listView.getItems().add("[ Withdraw ] - Amount :"+amount+"  "+"  Message :"+message);
+                operations.withdraw(id, amount, accountList, message, operationsList);
+                if (listView.getItems().size()>= 1){
+                    listView.getItems().clear();
+                    for (String str : operationsList){
+                        listView.getItems().add(str);
+                    }
+                }else {
+                    for (String str : operationsList){
+                        listView.getItems().add(str);
+                    }
+                }
                 textFieldAmountTransfer.setText("");
-                textAreaTransferMessage.setText("Your message here ...");
+                textAreaTransferMessage.setText("");
+                textAreaTransferMessage.setPromptText("Your message here ...");
                 List<Account> filterList = accountList.stream()
                         .filter(e -> e.getId() == id)
                         .collect(Collectors.toList());
@@ -156,12 +222,21 @@ public class PrimaryController implements Initializable {
                 float amount = Float.parseFloat(textFieldAmountTransfer.getText());
                 int idTo = Integer.parseInt(textFieldAccountIdTransfer.getText());
                 String message = textAreaTransferMessage.getText();
-                operations.transfer(idFrom, idTo, amount, accountList);
-                operationsList.add("[ Transfer ] - Amount :"+amount+"  "+"To AccountID :"+idTo+"  "+" Message :"+ message);
-                listView.getItems().add("[ Transfer ] - Amount :"+amount+"  "+"To AccountID :"+idTo+"  "+" Message :"+ message);
+                operations.transfer(idFrom, idTo, amount, accountList,message, operationsList);
+                if (listView.getItems().size()>= 1){
+                    listView.getItems().clear();
+                    for (String str : operationsList){
+                        listView.getItems().add(str);
+                    }
+                }else {
+                    for (String str : operationsList){
+                        listView.getItems().add(str);
+                    }
+                }
                 textFieldAmountTransfer.setText("");
                 textFieldAccountIdTransfer.setText("");
-                textAreaTransferMessage.setText("Your message here ...");
+                textAreaTransferMessage.setText("");
+                textAreaTransferMessage.setPromptText("Your message here ...");
                 List<Account> filterList = accountList.stream()
                         .filter(e -> e.getId() == idFrom)
                         .collect(Collectors.toList());
@@ -173,8 +248,7 @@ public class PrimaryController implements Initializable {
     }
 
     @FXML
-    private void selectAccount(){
-        buttonShow.setOnAction(actionEvent -> {
+    private void selectAccount(MouseEvent mouseEvent){
             try {
                 int id = Integer.parseInt(textFieldLogIn.getText());
                 List<Account> filterList = accountList.stream()
@@ -187,9 +261,12 @@ public class PrimaryController implements Initializable {
                     textFieldFirstSHow.setText(filterList.get(0).getPerson().getFirstName());
                     textFieldLastSHow.setText(filterList.get(0).getPerson().getLastName());
                     textFieldAgeSHow.setText(String.valueOf(filterList.get(0).getPerson().getAge()));
+                    labelLoginName.setText(" Welcome:"+" "+filterList.get(0).getPerson().getFirstName()+" "+filterList.get(0).getPerson().getLastName());
                     logOutButton.setVisible(true);
                     logOutImageView.setVisible(true);
+                    labelLoginName.setVisible(true);
                     textFieldLogIn.setText("");
+                    logIn();
                 }else {
                     wrongId(textFieldLogIn.getText());
                     textFieldLogIn.setText("");
@@ -198,7 +275,74 @@ public class PrimaryController implements Initializable {
                 wrongIdFormat(textFieldLogIn.getText());
                 textFieldLogIn.setText("");
             }
+    }
+    @FXML
+    private void logOut(ActionEvent actionEvent) {
+        TextField [] textFieldShow = {textFieldIdSHow, textFieldBalanceSHow,  textFieldBankSHow, textFieldFirstSHow, textFieldLastSHow, textFieldAgeSHow};
+        for (TextField textField : textFieldShow) {
+            textField.setText("");
+            textField.setPromptText("-");
+        }
+        if (listView.getItems().size() >=1){
+                listView.getItems().clear();
+        }
+        labelLoginName.setText("");
+        logOutButton.setVisible(false);
+        logOutImageView.setVisible(false);
+        labelLoginName.setVisible(false);
+        textFieldLogIn.setVisible(true);
+        buttonShow.setVisible(true);
+        logInImage.setVisible(true);
+
+
+    }
+    @FXML
+    private void filter(){
+        filterButton.setOnAction(actionEvent -> {
+            if (radioButtonAgeFilter.isSelected() && !textFieldFilter.getText().equals("")){
+                try {
+                    int age = Integer.parseInt(textFieldFilter.getText());
+                    List<Account> filterList = accountList.stream().filter(e -> e.getPerson().getAge() == age).collect(Collectors.toList());
+                    ObservableList<Account> data = FXCollections.observableArrayList();
+                            for (Account account : filterList){
+                                data.add(new Account(account.getId(), account.getBalance(), new Bank(account.getBank().getName()),new Person(account.getPerson().getFirstName(), account.getPerson().getLastName(), account.getPerson().getAge())));
+                            }
+                    tableView.setItems(data);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }else if (radioButtonBankFilter.isSelected()){
+                String bank = textFieldFilter.getText();
+                List<Account> filterList = accountList.stream().filter(e -> e.getBank().getName().startsWith(bank)).collect(Collectors.toList());
+                ObservableList<Account> data = FXCollections.observableArrayList();
+                for (Account account : filterList){
+                    data.add(new Account(account.getId(), account.getBalance(), new Bank(account.getBank().getName()),new Person(account.getPerson().getFirstName(), account.getPerson().getLastName(), account.getPerson().getAge())));
+                }
+                tableView.setItems(data);
+            } else if (radioButtonNameFilter.isSelected() && !textFieldFilter.getText().equals("")){
+                String name = textFieldFilter.getText();
+                List<Account> filterList = accountList.stream().filter(e -> e.getPerson().getLastName().startsWith(name)).collect(Collectors.toList());
+                ObservableList<Account> data = FXCollections.observableArrayList();
+                for (Account account : filterList){
+                    data.add(new Account(account.getId(), account.getBalance(), new Bank(account.getBank().getName()),new Person(account.getPerson().getFirstName(), account.getPerson().getLastName(), account.getPerson().getAge())));
+                }
+                tableView.setItems(data);
+            }else if (radioButtonIdFilter.isSelected() && !textFieldFilter.getText().equals("")){
+                try {
+                    int id = Integer.parseInt(textFieldFilter.getText());
+                    List<Account> filterList = accountList.stream().filter(e -> e.getId() == id).collect(Collectors.toList());
+                    ObservableList<Account> data = FXCollections.observableArrayList();
+                    for (Account account : filterList){
+                        data.add(new Account(account.getId(), account.getBalance(), new Bank(account.getBank().getName()),new Person(account.getPerson().getFirstName(), account.getPerson().getLastName(), account.getPerson().getAge())));
+                    }
+                    tableView.setItems(data);
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+
         });
+
     }
 
     private void idDuplicated(String message) {
@@ -245,43 +389,47 @@ public class PrimaryController implements Initializable {
     }
 
     @FXML
-    public void saveTextFile(ActionEvent actionEvent) {
-        int counter = 0;
-        int id = Integer.parseInt(textFieldIdSHow.getText());
-        List<Account> filterList = accountList.stream()
-                .filter(e -> e.getId() == id)
-                .collect(Collectors.toList());
-        int index = accountList.indexOf(filterList.get(0));
-        String path = System.getProperty("user.home") +
-                File.separator + "Documents" +
-                File.separator + "CustomFolder";
+    public void saveTextFile() {
+        buttonPrintOut.setOnAction(actionEvent -> {
+            int counter = 0;
+            if (!textFieldIdSHow.getText().equals("")) {
+                        int id = Integer.parseInt(textFieldIdSHow.getText());
+                        List<Account> filterList = accountList.stream()
+                                .filter(e -> e.getId() == id)
+                                .collect(Collectors.toList());
+                        int index = accountList.indexOf(filterList.get(0));
+                        String path = System.getProperty("user.home") +
+                                File.separator + "Documents" +
+                                File.separator + "CustomFolder";
 
-        File dir = new File(path);
+                        File dir = new File(path);
 
-        if (dir.exists())
-            System.out.println("Folder exist");
-        else if (dir.mkdir())
-            System.out.println("Folder created");
-        else
-            System.out.println("Folder not created");
+                        if (dir.exists())
+                            System.out.println("Folder exist");
+                        else if (dir.mkdir())
+                            System.out.println("Folder created");
+                        else
+                            System.out.println("Folder not created");
 
-        File filePath = new File(path + File.separator + "Kvittot.txt");
+                        File filePath = new File(path + File.separator + "Kvittot.txt");
+                        try (FileWriter out = new FileWriter(filePath + ".txt")) {
+                            out.write("--------------------------------------------------------------------------------------" + "\n");
+                            out.write("AccountID :" + id + "  " + "|" + " " + "Firstname :" + accountList.get(index).getPerson().getFirstName() + "  " + "|" + " " + "Lastname :" + accountList.get(index).getPerson().getLastName() + "\n");
 
-        try (FileWriter out = new FileWriter(filePath + ".txt")) {
-            out.write("------------------------------------------------------------------" + "\n");
-            out.write("AccountID :" + id + "  " + "|" + " " + "Firstname :" + accountList.get(index).getPerson().getFirstName() + "  " + "|" + " " + "Lastname :" + accountList.get(index).getPerson().getLastName() + "\n");
-
-            out.write("------------------------------------------------------------------" + "\n");
-            for (String str : operationsList) {
-                counter++;
-                out.write("Operation number : "+counter + " | " + str + "\n");
+                            out.write("--------------------------------------------------------------------------------------" + "\n");
+                            for (String str : operationsList) {
+                                counter++;
+                                out.write("Operation number : " + counter + " | " + str + "\n");
+                            }
+                            out.write("--------------------------------------------------------------------------------------" + "\n");
+                            out.write("Amount available :" + accountList.get(index).getBalance() + "kr" + "\n");
+                            out.write("--------------------------------------------------------------------------------------" + "\n");
+                        } catch (IOException ex) {
+                            System.out.println("Error!");
+                        }
             }
-            out.write("------------------------------------------------------------------" + "\n");
-            out.write("Amount available :" + accountList.get(index).getBalance() + "kr" + "\n");
-            out.write("------------------------------------------------------------------" + "\n");
-        } catch (IOException ex) {
-            System.out.println("Error!");
-        }
+        });
+
     }
 
     private void createAccount() {
@@ -306,5 +454,6 @@ public class PrimaryController implements Initializable {
         accountList.add(new Account(8, 0.0f, bankC, personG));
         accountList.add(new Account(9, 1200000.0f, bankC, personG));
     }
+
 
 }

@@ -1,39 +1,57 @@
 package org.openjfx;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.util.Objects;
 
-public class Person implements Human {
 
-    private String firstName;
-    private String lastName;
-    private int age;
+public class Person implements Human {
+    private SimpleStringProperty firstName;
+    private SimpleStringProperty lastName;
+    private SimpleIntegerProperty age;
 
     public Person(String firstName, String lastName, int age) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.age = age;
+        this.firstName = new SimpleStringProperty(firstName);
+        this.lastName = new SimpleStringProperty(lastName);
+        this.age = new SimpleIntegerProperty(age);
     }
+
 
     @Override
     public String getFirstName() {
-        return firstName;
+        return firstName.get();
     }
 
     @Override
     public String getLastName() {
-        return lastName;
+        return lastName.get();
     }
 
     @Override
     public int getAge() {
-        return age;
+        return age.get();
+    }
+
+    @Override
+    public void setFirstName(String firstName) {
+        this.firstName.set(firstName);
+    }
+
+    @Override
+    public void setLastName(String lastName) {
+        this.lastName.set(lastName);
+    }
+
+    @Override
+    public void setAge(int age) {
+        this.age.set(age);
     }
 
     @Override
     public String toString() {
         return "Person{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
+                "firstName=" + firstName +
+                ", lastName=" + lastName +
                 ", age=" + age +
                 '}';
     }
@@ -43,9 +61,9 @@ public class Person implements Human {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return age == person.age &&
-                Objects.equals(firstName, person.firstName) &&
-                Objects.equals(lastName, person.lastName);
+        return Objects.equals(firstName, person.firstName) &&
+                Objects.equals(lastName, person.lastName) &&
+                Objects.equals(age, person.age);
     }
 
     @Override

@@ -1,22 +1,29 @@
 package org.openjfx;
 
+import javafx.beans.property.SimpleStringProperty;
+
 import java.util.Objects;
 
-public class Bank {
-   private String name;
 
-    public String getName() {
-        return name;
-    }
+public class Bank {
+   private SimpleStringProperty name;
 
     public Bank(String name) {
-        this.name = name;
+        this.name = new SimpleStringProperty(name);
+    }
+
+    public String getName() {
+        return name.get();
+    }
+
+    public void setName(String name) {
+        this.name.set(name);
     }
 
     @Override
     public String toString() {
         return "Bank{" +
-                "name='" + name + '\'' +
+                "name=" + name +
                 '}';
     }
 
