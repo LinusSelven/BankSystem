@@ -3,6 +3,7 @@ org\openjfx\PrimaryController.class
 org\openjfx\Model.class
 org\openjfx\Person.class
 module-info.class
+org\openjfx\StringMessage.class
 org\openjfx\Human.class
 org\openjfx\Operations.class
 org\openjfx\Bank.class

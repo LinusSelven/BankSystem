@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,6 +41,7 @@ public class PrimaryController implements Initializable {
     @FXML private ImageView searchImage, logInImage, logOutImageView, operationDoneId ,printImageId, saveImageId;
     private List<Account> accountList = new ArrayList<>();
     private List<String> operationsList = new ArrayList<>();
+    private StringMessage stringMessage = new StringMessage();
 
 
 
@@ -97,7 +97,7 @@ public class PrimaryController implements Initializable {
         firstNameCol.setCellValueFactory(firstName -> new ReadOnlyObjectWrapper<>( firstName.getValue().getPerson().getFirstName()));
         lastNameCol.setCellValueFactory(lastNameGet -> new ReadOnlyObjectWrapper<>(lastNameGet.getValue().getPerson().getLastName()));
         ageCol.setCellValueFactory(ageGet ->  new ReadOnlyObjectWrapper<>(ageGet.getValue().getPerson().getAge()));
-        createAccount();
+        stringMessage.dataTest(accountList);
 
     }
     @FXML
@@ -138,7 +138,7 @@ public class PrimaryController implements Initializable {
                                     .collect(Collectors.toList());
                             if (filterList.size() == 0){
                                 accountList.add(new Account(id,balance, new Bank(textFieldBankAdd.getText()), new Person(textFieldFirstAdd.getText(), textFieldLastAdd.getText(), age)));
-                                confirmation();
+                                stringMessage.confirmation();
                                 textFieldIdAdd.setText("");
                                 textFieldBalanceAdd.setText("");
                                 textFieldBankAdd.setText("");
@@ -147,19 +147,19 @@ public class PrimaryController implements Initializable {
                                 textFieldAgeAdd.setText("");
                             }
                             else {
-                                idDuplicated(textFieldIdAdd.getText());
+                                stringMessage.idDuplicated(textFieldIdAdd.getText());
                                 textFieldIdAdd.setText("");
                             }
                         } catch (NumberFormatException e) {
-                            balanceShouldBeFloat();
+                            stringMessage.balanceShouldBeFloat();
                             textFieldBalanceAdd.setText("");
                         }
                     } catch (NumberFormatException e) {
-                        ageShouldBeInt();
+                        stringMessage.ageShouldBeInt();
                     }
 
                 } catch (NumberFormatException e) {
-                    idShouldBeInt();
+                    stringMessage.idShouldBeInt();
                     textFieldIdAdd.setText("");
                 }
             }
@@ -268,11 +268,11 @@ public class PrimaryController implements Initializable {
                     textFieldLogIn.setText("");
                     logIn();
                 }else {
-                    wrongId(textFieldLogIn.getText());
+                    stringMessage.wrongId(textFieldLogIn.getText());
                     textFieldLogIn.setText("");
                 }
             } catch (NumberFormatException e) {
-                wrongIdFormat(textFieldLogIn.getText());
+                stringMessage.wrongIdFormat(textFieldLogIn.getText());
                 textFieldLogIn.setText("");
             }
     }
@@ -344,50 +344,6 @@ public class PrimaryController implements Initializable {
         });
 
     }
-
-    private void idDuplicated(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("This ID ["+message+"] is already used!");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-    private void idShouldBeInt() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("The ID should be digits!");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-    private void ageShouldBeInt() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("The age should be digits!");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-    private void balanceShouldBeFloat() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("The Balance should be digits!");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-    private void confirmation() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setContentText("Are you sure? if YES click OK!");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-    private void wrongId(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("There is no account has this ID :["+message+"]");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-    private void wrongIdFormat(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("The ID contains digits!");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-
     @FXML
     public void saveTextFile() {
         buttonPrintOut.setOnAction(actionEvent -> {
@@ -432,28 +388,6 @@ public class PrimaryController implements Initializable {
 
     }
 
-    private void createAccount() {
-        Person personA = new Person("FirstA","LastA",20);
-        Person personB = new Person("FirstB","LastB",21);
-        Person personC = new Person("FirstC","LastC",22);
-        Person personD = new Person("FirstD","LastD",23);
-        Person personE = new Person("FirstE","LastE",24);
-        Person personF = new Person("FirstF","LastF",25);
-        Person personG = new Person("FirstG","LastG",26);
-        Bank bankA = new Bank("SEB");
-        Bank bankB = new Bank("Swedbank");
-        Bank bankC = new Bank("Handelsbanken");
-        Bank bankD = new Bank("Nordea");
-        accountList.add(new Account(1, 30000.0f, bankA, personA));
-        accountList.add(new Account(2, 10000.0f, bankC, personB));
-        accountList.add(new Account(3, 20000.0f, bankB, personC));
-        accountList.add(new Account(4, 50000.0f, bankD, personD));
-        accountList.add(new Account(5, 20000.0f, bankB, personE));
-        accountList.add(new Account(6, 5000.0f, bankB, personF));
-        accountList.add(new Account(7, 2000.0f, bankC, personF));
-        accountList.add(new Account(8, 0.0f, bankC, personG));
-        accountList.add(new Account(9, 1200000.0f, bankC, personG));
-    }
 
 
 }

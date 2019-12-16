@@ -1,35 +1,36 @@
 package org.openjfx;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-
+import org.junit.jupiter.api.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class OperationsTest {
-    //private  Account account = new Account(1, 100, new Person("Java", "Java", 35), new Bank("Swedbank"));
-    //private  Account account2 = new Account(2, 200, new Person("Python", "Python", 25), new Bank("HSBC"));
     private List<Account> accountList= new ArrayList<>();
+<<<<<<< Updated upstream
     private List<String> operationList= new ArrayList<>();
+=======
+    private List<String> stringList = new ArrayList<>();
+>>>>>>> Stashed changes
     private  Operations operations;
 
     @BeforeEach
-
     void init() {
+<<<<<<< Updated upstream
         //accountList.add(account);
         //accountList.add(account2);
         operations= new Operations();
+=======
+        operations = new Operations();
+        accountList.add(new Account(1, 100, new Bank("Swedbank"), new Person("Java", "Java", 35)));
+        accountList.add( new Account(2, 200, new Bank("HSBC"), new Person("Python", "Python", 25)));
+>>>>>>> Stashed changes
     }
 
 
     @Test
     @Order(2)
     @DisplayName("Deposit test")
+<<<<<<< Updated upstream
     void deposit(){
         Account account = new Account(1, 100, new Bank("Swedbank"),  new Person("Java", "Java", 35));
         Account account2 = new Account(2, 200,  new Bank("HSBC"), new Person("Python", "Python", 25));
@@ -42,13 +43,17 @@ class OperationsTest {
         operations.deposit(1, 500, accountList, "500 sek is added", operationList);
         assertEquals(600, accountList.get(index).getBalance() );
         System.out.println("Balance after deposit = "+ accountList.get(index).getBalance());
+=======
+        void depositTest(){
+        operations.deposit(1, 500, accountList, "Deposit 500", stringList );
+        Assertions.assertEquals(600, accountList.get(0).getBalance());
+>>>>>>> Stashed changes
     }
-
-
 
     @Test
     @Order(3)
     @DisplayName("Withdraw test")
+<<<<<<< Updated upstream
     void withdraw(){
         Account account = new Account(1, 100, new Bank("Swedbank"),  new Person("Java", "Java", 35));
         Account account2 = new Account(2, 200,  new Bank("HSBC"), new Person("Python", "Python", 25));
@@ -62,6 +67,11 @@ class OperationsTest {
         operations.withdraw(1, 20, accountList, "20 sek witdrawn", operationList);
         assertEquals(80, accountList.get(index).getBalance());
         System.out.println(" Balance after withdrawal = "+accountList.get(index).getBalance());
+=======
+    void withdrawTest(){
+            operations.withdraw(2, 100, accountList, "WithDraw 100", stringList );
+            Assertions.assertEquals(100, accountList.get(1).getBalance());
+>>>>>>> Stashed changes
     }
 
 
@@ -69,6 +79,7 @@ class OperationsTest {
     @Order(4)
     @DisplayName("Transfer test")
     void transfer(){
+<<<<<<< Updated upstream
         Account account = new Account(1, 100, new Bank("Swedbank"),  new Person("Java", "Java", 35));
         Account account2 = new Account(2, 200,  new Bank("HSBC"), new Person("Python", "Python", 25));
         accountList.add(account);
@@ -87,6 +98,11 @@ class OperationsTest {
         );
         System.out.println(" Balance1 after transfer = " + accountList.get(indexAccount1).getBalance());
         System.out.println(" Balance2 after transfer = " + accountList.get(indexAccount2).getBalance());
+=======
+        operations.transfer(1, 2,100, accountList, "WithDraw 100", stringList );
+        Assertions.assertEquals(0, accountList.get(0).getBalance());
+        Assertions.assertEquals(300, accountList.get(1).getBalance());
+>>>>>>> Stashed changes
     }
 
 }

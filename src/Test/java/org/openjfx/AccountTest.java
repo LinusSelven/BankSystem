@@ -1,3 +1,4 @@
+package org.openjfx;
 
 import org.openjfx.Account;
 import org.openjfx.Bank;

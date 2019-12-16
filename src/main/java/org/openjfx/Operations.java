@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Operations {
+    private StringMessage stringMessage = new StringMessage();
 
     public Operations() {
     }
@@ -39,7 +40,7 @@ public class Operations {
                 accountList.get(index).setBalance(balance);
                 operationList.add("[ Withdraw ] - Amount :"+amount+"  "+"  Message :"+message);
             }else {
-                balanceLessThanAmount();
+                stringMessage.balanceLessThanAmount();
             }
         }
     }
@@ -62,32 +63,14 @@ public class Operations {
                     accountList.get(indexIdTo).setBalance(balance2 + amount);
                     operationList.add("[ Transfer ] - Amount :"+amount+"  "+"To AccountID :"+idTo+"  "+" Message :"+ message);
                 }else {
-                    balanceLessThanAmount();
+                    stringMessage.balanceLessThanAmount();
                 }
             }else {
-                accountIdTo();
+                stringMessage.accountIdTo();
             }
         }else{
-            sameIdBank();
+            stringMessage.sameIdBank();
         }
     }
 
-    private void balanceLessThanAmount() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("The available balance is less than the required amount!");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-    private void accountIdTo() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("The bank account to which it was sent does not exist!");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
-    private void sameIdBank() {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText("you can not transfer to to your account!");
-        alert.setHeaderText(null);
-        alert.showAndWait();
-    }
 }

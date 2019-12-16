@@ -132,9 +132,9 @@
       </font></TextField>
 
 
-    <Button fx:id="logOutButton" layoutX="303.0" layoutY="11.0" mnemonicParsing="false" onAction="#logOut" prefHeight="25.0" prefWidth="33.0" style="-fx-background-color: #ff0000;" textFill="RED" />
+    <Button fx:id="logOutButton" layoutX="303.0" layoutY="10.0" mnemonicParsing="false" onAction="#logOut" prefHeight="25.0" prefWidth="33.0" style="-fx-background-color: #ff0000;" textFill="RED" />
     <Button fx:id="buttonShow" layoutX="302.0" layoutY="53.0" mnemonicParsing="false" onMouseClicked="#selectAccount" prefHeight="25.0" prefWidth="33.0" style="-fx-background-color: #1af83f;" textFill="#1af83f" />
-    <ImageView fx:id="logOutImageView" fitHeight="20.0" fitWidth="20.0" layoutX="309.0" layoutY="14.0">
+    <ImageView fx:id="logOutImageView" fitHeight="20.0" fitWidth="20.0" layoutX="309.0" layoutY="13.0">
         <Image url="@icons8-logout-rounded-left-24.png" />
     </ImageView>
    <Label alignment="CENTER" contentDisplay="CENTER" layoutX="407.0" layoutY="94.0" prefHeight="33.0" prefWidth="242.0" style="-fx-border-color: #ffffff; -fx-background-color: #010e1a;" text="BANK STATEMENTS" textFill="WHITE" />
@@ -170,6 +170,9 @@
     <ImageView fx:id="logInImage" fitHeight="20.0" fitWidth="20.0" layoutX="309.0" layoutY="56.0" onMouseClicked="#selectAccount">
         <Image url="@icons8-enter-24.png" />
     </ImageView>
-   <Label fx:id="labelLoginName" layoutX="147.0" layoutY="10.0" prefHeight="25.0" prefWidth="152.0" style="-fx-border-color: #ffffff;" textFill="#ffd000" />
+   <Label fx:id="labelLoginName" layoutX="147.0" layoutY="10.0" prefHeight="25.0" prefWidth="152.0" style="-fx-border-color: #ffffff;" textFill="#ffd000">
+      <font>
+         <Font name="Arial" size="12.0" />
+      </font></Label>
 
 </AnchorPane>
