@@ -28,7 +28,7 @@ public class StringMessage {
         accountList.add(new Account(600, 5000.0f, bankB, personF));
         accountList.add(new Account(700, 2000.0f, bankC, personF));
         accountList.add(new Account(800, 0.0f, bankC, personG));
-        accountList.add(new Account(900, 1200000.0f, bankC, personG));
+        accountList.add(new Account(900, 1200000.0f, bankB, personG));
     }
     public void idDuplicated(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
