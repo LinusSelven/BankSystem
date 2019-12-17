@@ -43,6 +43,7 @@ public class PersonTest {
 
         Assertions.assertEquals(true, p1.equals(p3));
         Assertions.assertEquals(false, p1.equals(p2));
+        Assertions.assertEquals(true, p1.equals(p1));
 
 
     }

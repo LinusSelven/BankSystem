@@ -61,9 +61,9 @@ public class Person implements Human {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return Objects.equals(firstName, person.firstName) &&
-                Objects.equals(lastName, person.lastName) &&
-                Objects.equals(age, person.age);
+        return Objects.equals(firstName.toString(), person.firstName.toString()) &&
+                Objects.equals(lastName.toString(), person.lastName.toString()) &&
+                Objects.equals(age.intValue(), person.age.intValue());
     }
 
     @Override
