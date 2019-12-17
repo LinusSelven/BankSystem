@@ -15,9 +15,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PrimaryController implements Initializable {
@@ -40,7 +38,7 @@ public class PrimaryController implements Initializable {
     @FXML private TableColumn<Account, Integer> ageCol = new TableColumn<>();
     @FXML private ImageView searchImage, logInImage, logOutImageView, operationDoneId ,printImageId, saveImageId;
     private List<Account> accountList = new ArrayList<>();
-    private List<String> operationsList = new ArrayList<>();
+    private Map<String, Integer> operationsList = new HashMap<>();
     private StringMessage stringMessage = new StringMessage();
 
 
@@ -178,7 +176,7 @@ public class PrimaryController implements Initializable {
 
                 if (listView.getItems().size()>= 1){
                     listView.getItems().clear();
-                    for (String str : operationsList){
+                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
                         listView.getItems().add(str);
                     }
                 }else {

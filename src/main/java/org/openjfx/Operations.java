@@ -1,6 +1,7 @@
 package org.openjfx;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Operations {
@@ -9,7 +10,7 @@ public class Operations {
     public Operations() {
     }
 
-    public void deposit(int id,  float amount, List<Account> accountList, String message, List<String> operationList){
+    public void deposit(int id,  float amount, List<Account> accountList, String message, Map<String, Integer> operationList){
         float balance;
         List<Account> filteredList = accountList.stream()
                 .filter(e -> e.getId() == id)
@@ -20,12 +21,12 @@ public class Operations {
                 balance = accountList.get(index).getBalance();
                 balance= balance + amount;
                 accountList.get(index).setBalance(balance);
-                operationList.add("[ Deposit ] - Amount :"+amount+"  "+"  Message :"+message);
+                operationList.put("[ Deposit ] - Amount :"+amount+"  "+"  Message :"+message, id);
             }
         }
     }
 
-    public void withdraw(int id, float amount, List<Account> accountList, String message, List<String> operationList){
+    public void withdraw(int id, float amount, List<Account> accountList, String message, Map<String, Integer> operationList){
         List<Account> filteredList = accountList.stream()
                 .filter(e -> e.getId() == id)
                 .collect(Collectors.toList());
@@ -36,14 +37,14 @@ public class Operations {
             if (amount<=balance) {
                 balance= balance - amount;
                 accountList.get(index).setBalance(balance);
-                operationList.add("[ Withdraw ] - Amount :"+amount+"  "+"  Message :"+message);
+                operationList.put("[ Withdraw ] - Amount :"+amount+"  "+"  Message :"+message, id);
             }else {
                 stringMessage.balanceLessThanAmount();
             }
         }
     }
 
-    public void transfer(int idFrom , int idTo, float amount, List<Account> accountList, String message, List<String> operationList){
+    public void transfer(int idFrom , int idTo, float amount, List<Account> accountList, String message, Map<String, Integer> operationList){
         if (idFrom != idTo){
             List<Account> filterList = accountList.stream()
                 .filter(e -> e.getId() == idFrom)
@@ -59,7 +60,7 @@ public class Operations {
                     accountList.get(indexIdFrom).setBalance(balance1- amount);
                     float balance2 = accountList.get(indexIdTo).getBalance();
                     accountList.get(indexIdTo).setBalance(balance2 + amount);
-                    operationList.add("[ Transfer ] - Amount :"+amount+"  "+"To AccountID :"+idTo+"  "+" Message :"+ message);
+                    operationList.put("[ Transfer ] - Amount :"+amount+"  "+"To AccountID :"+idTo+"  "+" Message :"+ message, idFrom);
                 }else {
                     stringMessage.balanceLessThanAmount();
                 }
