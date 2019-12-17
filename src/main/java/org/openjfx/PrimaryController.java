@@ -39,6 +39,7 @@ public class PrimaryController implements Initializable {
     @FXML private ImageView searchImage, logInImage, logOutImageView, operationDoneId ,printImageId, saveImageId;
     private List<Account> accountList = new ArrayList<>();
     private Map<String, Integer> operationsList = new HashMap<>();
+    private List<String> listOfOperation = new ArrayList<>();
     private StringMessage stringMessage = new StringMessage();
 
 
@@ -173,14 +174,19 @@ public class PrimaryController implements Initializable {
                 float amount = Float.parseFloat(textFieldAmountTransfer.getText());
                 String message = textAreaTransferMessage.getText();
                 operations.deposit(id, amount, accountList, message, operationsList);
-
                 if (listView.getItems().size()>= 1){
                     listView.getItems().clear();
                     for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
+                        listOfOperation.add(getKey(operationsList, id));
+                    }
+                    for (String str : listOfOperation){
                         listView.getItems().add(str);
                     }
                 }else {
-                    for (String str : operationsList){
+                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
+                        listOfOperation.add(getKey(operationsList, id));
+                    }
+                    for (String str : listOfOperation){
                         listView.getItems().add(str);
                     }
                 }
@@ -199,11 +205,18 @@ public class PrimaryController implements Initializable {
                 operations.withdraw(id, amount, accountList, message, operationsList);
                 if (listView.getItems().size()>= 1){
                     listView.getItems().clear();
-                    for (String str : operationsList){
+                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
+                        listOfOperation.add(getKey(operationsList, id));
+                    }
+                    for (String str : listOfOperation){
                         listView.getItems().add(str);
                     }
                 }else {
-                    for (String str : operationsList){
+                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
+                        listOfOperation.add(getKey(operationsList, id));
+
+                    }
+                    for (String str : listOfOperation){
                         listView.getItems().add(str);
                     }
                 }
@@ -223,11 +236,17 @@ public class PrimaryController implements Initializable {
                 operations.transfer(idFrom, idTo, amount, accountList,message, operationsList);
                 if (listView.getItems().size()>= 1){
                     listView.getItems().clear();
-                    for (String str : operationsList){
+                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
+                        listOfOperation.add(getKey(operationsList, idFrom));
+                    }
+                    for (String str : listOfOperation){
                         listView.getItems().add(str);
                     }
                 }else {
-                    for (String str : operationsList){
+                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
+                        listOfOperation.add(getKey(operationsList, idFrom));
+                    }
+                    for (String str : listOfOperation){
                         listView.getItems().add(str);
                     }
                 }
@@ -371,10 +390,10 @@ public class PrimaryController implements Initializable {
                             out.write("AccountID :" + id + "  " + "|" + " " + "Firstname :" + accountList.get(index).getPerson().getFirstName() + "  " + "|" + " " + "Lastname :" + accountList.get(index).getPerson().getLastName() + "\n");
 
                             out.write("--------------------------------------------------------------------------------------" + "\n");
-                            for (String str : operationsList) {
+                           /* for (String str : operationsList) {
                                 counter++;
                                 out.write("Operation number : " + counter + " | " + str + "\n");
-                            }
+                            }*/
                             out.write("--------------------------------------------------------------------------------------" + "\n");
                             out.write("Amount available :" + accountList.get(index).getBalance() + "kr" + "\n");
                             out.write("--------------------------------------------------------------------------------------" + "\n");
@@ -384,6 +403,15 @@ public class PrimaryController implements Initializable {
             }
         });
 
+    }
+
+    public static <K, V> K getKey(Map<K, V> map, V value) {
+        for (K key : map.keySet()) {
+            if (value.equals(map.get(key))) {
+                return key;
+            }
+        }
+        return null;
     }
 
 
