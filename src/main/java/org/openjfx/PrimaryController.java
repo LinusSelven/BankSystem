@@ -38,8 +38,8 @@ public class PrimaryController implements Initializable {
     @FXML private TableColumn<Account, Integer> ageCol = new TableColumn<>();
     @FXML private ImageView searchImage, logInImage, logOutImageView, operationDoneId ,printImageId, saveImageId;
     private List<Account> accountList = new ArrayList<>();
-    private Map<String, Integer> operationsList = new HashMap<>();
-    private List<String> listOfOperation = new ArrayList<>();
+    private List<String> operationsList = new ArrayList<>();
+    private Map<String, Integer> operationMap = new HashMap<>();
     private StringMessage stringMessage = new StringMessage();
 
 
@@ -167,28 +167,18 @@ public class PrimaryController implements Initializable {
     @FXML
     private void operation() {
         buttonOperations.setOnAction(actionEvent -> {
-            Operations operations = new Operations();
 
             if (radioButtonDeposit.isSelected() && !textFieldAmountTransfer.getText().equals("")){
                 int id = Integer.parseInt(textFieldIdSHow.getText());
                 float amount = Float.parseFloat(textFieldAmountTransfer.getText());
                 String message = textAreaTransferMessage.getText();
-                operations.deposit(id, amount, accountList, message, operationsList);
-                if (listView.getItems().size()>= 1){
+                Operations.getInstance().deposit(id, amount, accountList, message, operationMap);
+                if (listView.getItems().size()>= 1) {
                     listView.getItems().clear();
-                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
-                        listOfOperation.add(getKey(operationsList, id));
-                    }
-                    for (String str : listOfOperation){
-                        listView.getItems().add(str);
-                    }
+
+                    listView.getItems().addAll(getKeys(operationMap, id));
                 }else {
-                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
-                        listOfOperation.add(getKey(operationsList, id));
-                    }
-                    for (String str : listOfOperation){
-                        listView.getItems().add(str);
-                    }
+                    listView.getItems().addAll(getKeys(operationMap, id));
                 }
                 textFieldAmountTransfer.setText("");
                 textAreaTransferMessage.setText("");
@@ -202,23 +192,13 @@ public class PrimaryController implements Initializable {
                 int id = Integer.parseInt(textFieldIdSHow.getText());
                 float amount = Float.parseFloat(textFieldAmountTransfer.getText());
                 String message = textAreaTransferMessage.getText();
-                operations.withdraw(id, amount, accountList, message, operationsList);
-                if (listView.getItems().size()>= 1){
+                Operations.getInstance().withdraw(id, amount, accountList, message, operationMap);
+                if (listView.getItems().size()>= 1) {
                     listView.getItems().clear();
-                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
-                        listOfOperation.add(getKey(operationsList, id));
-                    }
-                    for (String str : listOfOperation){
-                        listView.getItems().add(str);
-                    }
-                }else {
-                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
-                        listOfOperation.add(getKey(operationsList, id));
 
-                    }
-                    for (String str : listOfOperation){
-                        listView.getItems().add(str);
-                    }
+                    listView.getItems().addAll(getKeys(operationMap, id));
+                }else {
+                    listView.getItems().addAll(getKeys(operationMap, id));
                 }
                 textFieldAmountTransfer.setText("");
                 textAreaTransferMessage.setText("");
@@ -233,22 +213,13 @@ public class PrimaryController implements Initializable {
                 float amount = Float.parseFloat(textFieldAmountTransfer.getText());
                 int idTo = Integer.parseInt(textFieldAccountIdTransfer.getText());
                 String message = textAreaTransferMessage.getText();
-                operations.transfer(idFrom, idTo, amount, accountList,message, operationsList);
-                if (listView.getItems().size()>= 1){
+                Operations.getInstance().transfer(idFrom, idTo, amount, accountList,message, operationMap);
+                if (listView.getItems().size()>= 1) {
                     listView.getItems().clear();
-                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
-                        listOfOperation.add(getKey(operationsList, idFrom));
-                    }
-                    for (String str : listOfOperation){
-                        listView.getItems().add(str);
-                    }
+
+                    listView.getItems().addAll(getKeys(operationMap, idFrom));
                 }else {
-                    for (Map.Entry<String, Integer> entry : operationsList.entrySet()) {
-                        listOfOperation.add(getKey(operationsList, idFrom));
-                    }
-                    for (String str : listOfOperation){
-                        listView.getItems().add(str);
-                    }
+                    listView.getItems().addAll(getKeys(operationMap, idFrom));
                 }
                 textFieldAmountTransfer.setText("");
                 textFieldAccountIdTransfer.setText("");
@@ -284,6 +255,9 @@ public class PrimaryController implements Initializable {
                     labelLoginName.setVisible(true);
                     textFieldLogIn.setText("");
                     logIn();
+                    if (getKeys(operationMap, id) != null) {
+                        listView.getItems().addAll(getKeys(operationMap, id));
+                    }
                 }else {
                     stringMessage.wrongId(textFieldLogIn.getText());
                     textFieldLogIn.setText("");
@@ -387,13 +361,14 @@ public class PrimaryController implements Initializable {
                         File filePath = new File(path + File.separator + "Kvittot.txt");
                         try (FileWriter out = new FileWriter(filePath + ".txt")) {
                             out.write("--------------------------------------------------------------------------------------" + "\n");
-                            out.write("AccountID :" + id + "  " + "|" + " " + "Firstname :" + accountList.get(index).getPerson().getFirstName() + "  " + "|" + " " + "Lastname :" + accountList.get(index).getPerson().getLastName() + "\n");
+                            out.write("Account ID :" + id + "  " + "|" + " " + "First Name :" + accountList.get(index).getPerson().getFirstName() + "  " + "|" + " " + "Last Name :" + accountList.get(index).getPerson().getLastName() + "\n");
 
                             out.write("--------------------------------------------------------------------------------------" + "\n");
-                           /* for (String str : operationsList) {
+                            operationsList.addAll(getKeys(operationMap, id));
+                            for (String str : operationsList) {
                                 counter++;
                                 out.write("Operation number : " + counter + " | " + str + "\n");
-                            }*/
+                            }
                             out.write("--------------------------------------------------------------------------------------" + "\n");
                             out.write("Amount available :" + accountList.get(index).getBalance() + "kr" + "\n");
                             out.write("--------------------------------------------------------------------------------------" + "\n");
@@ -405,13 +380,15 @@ public class PrimaryController implements Initializable {
 
     }
 
-    public static <K, V> K getKey(Map<K, V> map, V value) {
-        for (K key : map.keySet()) {
-            if (value.equals(map.get(key))) {
-                return key;
+
+    public <String, Integer> Set<String> getKeys(Map<String, Integer> map, Integer value) {
+        Set<String> keys = new HashSet<>();
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            if (entry.getValue().equals(value)) {
+                keys.add(entry.getKey());
             }
         }
-        return null;
+        return keys;
     }
 
 

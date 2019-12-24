@@ -6,9 +6,19 @@ import java.util.stream.Collectors;
 
 public class Operations {
     private StringMessage stringMessage = new StringMessage();
+    private static Operations operations = null;
 
-    public Operations() {
+    private Operations() {
     }
+
+    public static Operations getInstance(){
+        if (operations == null)
+        {
+            operations = new Operations();
+        }
+        return operations;
+    }
+
 
     public void deposit(int id,  float amount, List<Account> accountList, String message, Map<String, Integer> operationList){
         float balance;
